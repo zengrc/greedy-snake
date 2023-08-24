@@ -1,27 +1,59 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div id="playground"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+<script lang="ts" setup>
+import Game from '@/snake/Game';
+import Map from '@/snake/Map';
+import Foods from '@/snake/Food';
+import Snake, { DIRECTION } from '@/snake/Snake';
+import { onMounted } from 'vue';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
+onMounted(() => {
+  const game = new Game('#playground');
+  let timer = 0;
+  game.init();
+  const map = new Map(game);
+  map.registerListeners((event) => {
+    const { code } = event;
+    switch(code) {
+      case 'ArrowUp':
+        snake.changeDirection(DIRECTION.UP);
+        break;
+      case 'ArrowRight':
+        snake.changeDirection(DIRECTION.RIGHT);
+        break;
+      case 'ArrowLeft':
+        snake.changeDirection(DIRECTION.LEFT);
+        break;
+      case 'ArrowDown':
+        snake.changeDirection(DIRECTION.DOWN);
+        break;
+    }
+  })
+  const foods = new Foods(game, map);
+  const snake = new Snake(game, map, foods);
+  snake.onGameOver = () => {
+    alert('game over!!')
+    clearInterval(timer);
   }
-});
+  game.addItem(map);
+  game.addItem(snake);
+  game.addItem(foods);
+  game.render();
+  timer = setInterval(() => {
+    snake.move();
+    foods.createFood();
+    game.render();
+  }, 500);
+})
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style type="scss" scoped>
+
+#playground {
+  width: 500px;
+  height: 500px;
+  margin: 50px auto;
 }
 </style>
