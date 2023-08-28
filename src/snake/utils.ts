@@ -35,15 +35,16 @@ export const setAttribute = (
   attribute: string,
   dataSize = 2,
   type?: number,
+  isInt?: boolean,
 ) => {
   const buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), type || gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, isInt ? new Uint8Array(data) : new Float32Array(data), type || gl.STATIC_DRAW);
   // 获取顶点属性的在着色器中的索引，并激活它
   const aVertexPositionLocation = gl.getAttribLocation(program, attribute);
   gl.enableVertexAttribArray(aVertexPositionLocation);
   // 设置顶点属性如何从顶点缓冲对象中取值。每次从数组缓冲对象中读取2个值
-  gl.vertexAttribPointer(aVertexPositionLocation, dataSize, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(aVertexPositionLocation, dataSize, isInt ? gl.UNSIGNED_BYTE : gl.FLOAT, false, 0, 0);
 };
 
 export const setUniformMat = (

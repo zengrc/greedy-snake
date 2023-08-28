@@ -2,7 +2,7 @@ import Game, { GameObject } from './Game';
 import Map, { CELL_TYPE } from './Map';
 import Foods from './Food';
 
-import Point from './Point';
+import Cube from './Cube';
 
 export enum DIRECTION {
   LEFT = -1,
@@ -11,14 +11,14 @@ export enum DIRECTION {
   DOWN = 2,
 }
 
-class SnakePoint extends Point {
+class SnakePoint extends Cube {
   red = 0;
   blue = 0;
   green = 0.5;
   scale = 10;
 
   constructor(game: Game, map: Map, rowIdx: number, colIdx: number) {
-    super(game, map, rowIdx, colIdx, CELL_TYPE.SNAKE);
+    super(game, map, rowIdx, colIdx, CELL_TYPE.SNAKE, 'logo');
   }
 }
 
@@ -48,12 +48,6 @@ export default class Snake extends GameObject {
     this.direction = direction;
   }
 
-  private replaceColor(snakePoint: SnakePoint, point: Point) {
-    snakePoint.red = point.red;
-    snakePoint.blue = point.blue;
-    snakePoint.green = point.green;
-  }
-
   private snakeMove(rowIdx: number, colIdx: number) {
     const cellType = this.map.getCellType(rowIdx, colIdx);
     const newItem = new SnakePoint(this.game, this.map, rowIdx, colIdx);
@@ -79,7 +73,7 @@ export default class Snake extends GameObject {
       if (foodItem) {
         const newTailItem = new SnakePoint(this.game, this.map, foodItem.rowIdx, foodItem.colIdx);
         // 变色并加到末尾
-        this.replaceColor(newTailItem, foodItem);
+        // this.replaceColor(newTailItem, foodItem);
         this.items.unshift(newTailItem);
       }
       return;

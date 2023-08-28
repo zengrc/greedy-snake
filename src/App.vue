@@ -3,14 +3,16 @@
 </template>
 
 <script lang="ts" setup>
+/* eslint-disable @typescript-eslint/no-var-requires */
 import Game from '@/snake/Game';
 import Map from '@/snake/Map';
 import Foods from '@/snake/Food';
 import Snake, { DIRECTION } from '@/snake/Snake';
 import { onMounted } from 'vue';
 
-onMounted(() => {
+onMounted(async () => {
   const game = new Game('#playground');
+  await game.texture.createTexture('logo', require('./assets/logo.png'));
   let timer = 0;
   game.init();
   const map = new Map(game);
@@ -41,11 +43,11 @@ onMounted(() => {
   game.addItem(snake);
   game.addItem(foods);
   game.render();
-  timer = setInterval(() => {
-    snake.move();
-    foods.createFood();
-    game.render();
-  }, 500);
+  // timer = setInterval(() => {
+  //   snake.move();
+  //   foods.createFood();
+  //   game.render();
+  // }, 500);
 })
 </script>
 
