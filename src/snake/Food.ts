@@ -47,4 +47,8 @@ export default class Foods extends GameObject {
       return deleteItem;
     }
   }
+
+  reset() {
+    this.items = [];
+  }
 }

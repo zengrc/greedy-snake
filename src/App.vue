@@ -13,15 +13,32 @@ import Foods from '@/snake/Food';
 import Snake, { DIRECTION } from '@/snake/Snake';
 import { onMounted } from 'vue';
 
+enum GAME_STATUS {
+  PENDING,
+  GAME_OVER,
+  PLAYING
+}
+
 let timer = 0;
 let render = () => { /* */ }
+let reset = () => { /* */ }
+let gameStatus = GAME_STATUS.PENDING;
+
+const TIME_GAP = 300;
 
 const startGame = () => {
-  clearInterval(timer);
-  if (!render) return;
-  timer = setInterval(() => {
-    render();
-  }, 500);
+  if (gameStatus === GAME_STATUS.PENDING) {
+    clearInterval(timer);
+    if (!render) return;
+    timer = setInterval(() => {
+      render();
+    }, TIME_GAP);
+  } else if (gameStatus === GAME_STATUS.GAME_OVER) {
+    reset();
+    timer = setInterval(() => {
+      render();
+    }, TIME_GAP);
+  }
 }
 
 onMounted(async () => {
@@ -55,6 +72,7 @@ onMounted(async () => {
   snake.onGameOver = () => {
     alert('game over!!')
     clearInterval(timer);
+    gameStatus = GAME_STATUS.GAME_OVER;
   }
   game.addItem(map);
   game.addItem(snake);
@@ -63,6 +81,12 @@ onMounted(async () => {
   render = () => {
     snake.move();
     foods.createFood();
+    game.render();
+  }
+  reset = () => {
+    map.reset();
+    snake.reset();
+    foods.reset();
     game.render();
   }
 })

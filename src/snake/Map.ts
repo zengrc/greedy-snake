@@ -12,6 +12,7 @@ export default class Map extends GameObject {
   col: number;
   row: number;
   private cellTypeMap: Record<string, CELL_TYPE> = {};
+  private game: Game;
   keyDownCallback: (e: KeyboardEvent) => void = () => { /**/ };
 
   get emptyCells() {
@@ -22,11 +23,8 @@ export default class Map extends GameObject {
     super();
     this.col = Math.floor(game.width / Point.CellSize);
     this.row = Math.floor(game.height / Point.CellSize);
-    for (let i = 0; i < this.row; i += 1) {
-      for (let j = 0; j < this.col; j += 1) {
-        this.items.push(new Point(game, this, i, j));
-      }
-    }
+    this.game = game;
+    this.reset();
   }
 
   removeListeners() {
@@ -49,5 +47,13 @@ export default class Map extends GameObject {
 
   getCellType(rowIdx: number, colIdx: number) {
     return this.cellTypeMap[`${rowIdx},${colIdx}`] || CELL_TYPE.EMPTY;
+  }
+
+  reset() {
+    for (let i = 0; i < this.row; i += 1) {
+      for (let j = 0; j < this.col; j += 1) {
+        this.items.push(new Point(this.game, this, i, j));
+      }
+    }
   }
 }

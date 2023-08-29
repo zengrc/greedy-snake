@@ -28,14 +28,19 @@ export default class Snake extends GameObject {
 
   constructor(game: Game, map: Map, foods: Foods) {
     super();
-    this.items = [
-      new SnakePoint(game, map, 2, 1),
-      new SnakePoint(game, map, 2, 2),
-      new SnakePoint(game, map, 2, 3)
-    ];
     this.map = map;
     this.game = game;
     this.foods = foods;
+    this.reset();
+  }
+
+  reset() {
+    this.items = [
+      new SnakePoint(this.game, this.map, 2, 1),
+      new SnakePoint(this.game, this.map, 2, 2),
+      new SnakePoint(this.game, this.map, 2, 3)
+    ];
+    this.direction = this._direction = DIRECTION.RIGHT;
   }
 
   changeDirection(direction: DIRECTION) {
