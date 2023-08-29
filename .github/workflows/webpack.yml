@@ -1,4 +1,4 @@
-name: color-splash ci
+name: greedy-snake ci
 
 on:
   push:
