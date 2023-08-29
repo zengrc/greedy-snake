@@ -35,13 +35,13 @@ export const textureVertSrc = `
 `;
 
 export const textureFrgSrc = `
-  #define numTextures 4
+  #define numTextures 8
   precision mediump float;
   varying float v_textureIndex;
   varying vec2 v_texCoord;
   uniform sampler2D u_textures[numTextures];
       
-  vec4 getSampleFromArray(sampler2D textures[4], int ndx, vec2 uv) {
+  vec4 getSampleFromArray(sampler2D textures[8], int ndx, vec2 uv) {
     vec4 color = vec4(uv, 0, 1);
     for (int i = 0; i < numTextures; ++i) {
       if (i == ndx) {

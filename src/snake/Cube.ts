@@ -35,7 +35,6 @@ export default class Cube extends GameItem {
     this.y = cube.y;
     this.translateX = cube.translateX;
     this.translateY = cube.translateY;
-    this.texture = cube.texture;
     this.width = cube.width;
     this.height = cube.height;
   }

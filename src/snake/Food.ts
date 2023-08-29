@@ -1,20 +1,20 @@
 import Game, { GameObject } from './Game';
 import Map, { CELL_TYPE } from './Map';
 
-import Point from './Point';
+import Cube from './Cube';
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-class FoodPoint extends Point {
-  scale = 5;
+class FoodPoint extends Cube {
+  width = 6;
+  height = 6;
 
   constructor(game: Game, map: Map, rowIdx: number, colIdx: number) {
-    super(game, map, rowIdx, colIdx, CELL_TYPE.FOOD);
-    this.red = getRandomInt(5, 10) / 10;
-    this.blue = getRandomInt(5, 10) / 10;
-    this.green = getRandomInt(5, 10) / 10;
+    const foodID = getRandomInt(1, 4);
+
+    super(game, map, rowIdx, colIdx, CELL_TYPE.FOOD, `food${foodID}`);
   }
 }
 
@@ -39,7 +39,7 @@ export default class Foods extends GameObject {
     this.items.push(newFood);
   }
 
-  eat(point: Point) {
+  eat(point: Cube) {
     const index = this.items.indexOf(this.items.filter(item => item.rowIdx === point.rowIdx && item.colIdx === point.colIdx)[0]);
     if (index > -1) {
       const deleteItem = this.items.splice(index, 1)[0];

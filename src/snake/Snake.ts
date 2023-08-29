@@ -12,11 +12,6 @@ export enum DIRECTION {
 }
 
 class SnakePoint extends Cube {
-  red = 0;
-  blue = 0;
-  green = 0.5;
-  scale = 10;
-
   constructor(game: Game, map: Map, rowIdx: number, colIdx: number) {
     super(game, map, rowIdx, colIdx, CELL_TYPE.SNAKE, 'logo');
   }
@@ -68,12 +63,11 @@ export default class Snake extends GameObject {
     this.map.updateCellType(newItem.rowIdx, newItem.colIdx, CELL_TYPE.SNAKE);
     if (cellType === CELL_TYPE.FOOD) {
       // 吃到食物变成，队首插一个新元素，颜色和食物相同
-      // this.items.unshift(newItem);
       const foodItem = this.foods.eat(newItem);
       if (foodItem) {
         const newTailItem = new SnakePoint(this.game, this.map, foodItem.rowIdx, foodItem.colIdx);
         // 变色并加到末尾
-        // this.replaceColor(newTailItem, foodItem);
+        newTailItem.texture = foodItem.texture;
         this.items.unshift(newTailItem);
       }
       return;

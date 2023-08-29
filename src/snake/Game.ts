@@ -108,7 +108,7 @@ export default class Game {
       if (!this.textureProgram) return;
       setUniformMat(this.gl, this.textureProgram, this.projectionMat, 'u_projection');
       const textureLoc = this.gl.getUniformLocation(this.textureProgram, "u_textures");
-      this.gl.uniform1iv(textureLoc, [0, 1, 2, 3]);
+      this.gl.uniform1iv(textureLoc, [0, 1, 2, 3, 4]);
     }
     if (!this.textureProgram) return;
     this.gl.useProgram(this.textureProgram);

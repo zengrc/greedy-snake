@@ -1,4 +1,7 @@
 <template>
+  <div class="btn" @click="startGame">
+    start
+  </div>
   <div id="playground"></div>
 </template>
 
@@ -10,10 +13,24 @@ import Foods from '@/snake/Food';
 import Snake, { DIRECTION } from '@/snake/Snake';
 import { onMounted } from 'vue';
 
+let timer = 0;
+let render = () => { /* */ }
+
+const startGame = () => {
+  clearInterval(timer);
+  if (!render) return;
+  timer = setInterval(() => {
+    render();
+  }, 500);
+}
+
 onMounted(async () => {
   const game = new Game('#playground');
   await game.texture.createTexture('logo', require('./assets/logo.png'));
-  let timer = 0;
+  await game.texture.createTexture('food1', require('./assets/food_1.png'));
+  await game.texture.createTexture('food2', require('./assets/food_2.png'));
+  await game.texture.createTexture('food3', require('./assets/food_3.png'));
+  await game.texture.createTexture('food4', require('./assets/food_4.png'));
   game.init();
   const map = new Map(game);
   map.registerListeners((event) => {
@@ -43,11 +60,11 @@ onMounted(async () => {
   game.addItem(snake);
   game.addItem(foods);
   game.render();
-  // timer = setInterval(() => {
-  //   snake.move();
-  //   foods.createFood();
-  //   game.render();
-  // }, 500);
+  render = () => {
+    snake.move();
+    foods.createFood();
+    game.render();
+  }
 })
 </script>
 
@@ -57,5 +74,16 @@ onMounted(async () => {
   width: 500px;
   height: 500px;
   margin: 50px auto;
+}
+
+.btn {
+  padding: 10px;
+  border: solid 1px lightgray;
+  width: fit-content;
+  margin: 50px auto auto;
+  cursor: pointer;
+  &:hover {
+    background: lightgray;
+  }
 }
 </style>
