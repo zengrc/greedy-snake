@@ -204,8 +204,6 @@ export default class Game {
     const pointArr: GameItem[] = [];
     const textureArr: GameItem[] = [];
     objs.forEach(obj => {
-      const pointArr: GameItem[] = [];
-      const textureArr: GameItem[] = [];
       obj.items.forEach(i => {
         if (i.isPoint()) pointArr.push(i);
         else if (i.isTexture()) textureArr.push(i);
