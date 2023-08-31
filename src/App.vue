@@ -9,8 +9,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import Game from '@/snake/Game';
 import Map from '@/snake/Map';
-import Foods from '@/snake/Food';
-import Snake, { DIRECTION } from '@/snake/Snake';
 import { onMounted } from 'vue';
 
 enum GAME_STATUS {
@@ -50,43 +48,19 @@ onMounted(async () => {
   await game.texture.createTexture('food4', require('./assets/food_4.png'));
   game.init();
   const map = new Map(game);
-  map.registerListeners((event) => {
-    const { code } = event;
-    switch(code) {
-      case 'ArrowUp':
-        snake.changeDirection(DIRECTION.UP);
-        break;
-      case 'ArrowRight':
-        snake.changeDirection(DIRECTION.RIGHT);
-        break;
-      case 'ArrowLeft':
-        snake.changeDirection(DIRECTION.LEFT);
-        break;
-      case 'ArrowDown':
-        snake.changeDirection(DIRECTION.DOWN);
-        break;
-    }
-  })
-  const foods = new Foods(game, map);
-  const snake = new Snake(game, map, foods);
-  snake.onGameOver = () => {
+  map.snake.onGameOver = () => {
     alert('game over!!')
     clearInterval(timer);
     gameStatus = GAME_STATUS.GAME_OVER;
   }
-  game.addItem(map);
-  game.addItem(snake);
-  game.addItem(foods);
+  game.add(map);
   game.render();
   render = () => {
-    snake.move();
-    foods.createFood();
+    map.update();
     game.render();
   }
   reset = () => {
     map.reset();
-    snake.reset();
-    foods.reset();
     game.render();
   }
 })

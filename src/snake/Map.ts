@@ -1,5 +1,7 @@
 import Game, { GameObject } from './Game';
 import Point from './Point';
+import Snake, { DIRECTION } from './Snake';
+import Foods from './Food';
 
 export enum CELL_TYPE {
   SNAKE = 1,
@@ -11,9 +13,10 @@ export default class Map extends GameObject {
   items: Point[] = [];
   col: number;
   row: number;
+  game: Game;
+  snake: Snake;
+  foods: Foods;
   private cellTypeMap: Record<string, CELL_TYPE> = {};
-  private game: Game;
-  keyDownCallback: (e: KeyboardEvent) => void = () => { /**/ };
 
   get emptyCells() {
     return Object.keys(this.cellTypeMap).filter(key => !this.cellTypeMap[key]).map(key => key.split(','));
@@ -27,14 +30,31 @@ export default class Map extends GameObject {
     this.reset();
   }
 
-  removeListeners() {
-    document.body.removeEventListener('keydown', this.keyDownCallback.bind(this));
+  snakeMoveListener(event: KeyboardEvent) {
+    const { code } = event;
+    switch(code) {
+      case 'ArrowUp':
+        this.snake.changeDirection(DIRECTION.UP);
+        break;
+      case 'ArrowRight':
+        this.snake.changeDirection(DIRECTION.RIGHT);
+        break;
+      case 'ArrowLeft':
+        this.snake.changeDirection(DIRECTION.LEFT);
+        break;
+      case 'ArrowDown':
+        this.snake.changeDirection(DIRECTION.DOWN);
+        break;
+    }
   }
 
-  registerListeners(cb: (e: KeyboardEvent) => void) {
+  removeListeners() {
+    document.body.removeEventListener('keydown', this.snakeMoveListener.bind(this));
+  }
+
+  registerListeners() {
     this.removeListeners();
-    this.keyDownCallback = cb;
-    document.body.addEventListener('keydown', this.keyDownCallback.bind(this))
+    document.body.addEventListener('keydown', this.snakeMoveListener.bind(this))
   }
 
   hasEmptyCell() {
@@ -49,11 +69,20 @@ export default class Map extends GameObject {
     return this.cellTypeMap[`${rowIdx},${colIdx}`] || CELL_TYPE.EMPTY;
   }
 
+  update() {
+    this.snake.move();
+    this.foods.createFood();
+  }
+
   reset() {
     for (let i = 0; i < this.row; i += 1) {
       for (let j = 0; j < this.col; j += 1) {
         this.items.push(new Point(this.game, this, i, j));
       }
     }
+    this.foods = new Foods(this.game, this);
+    this.snake = new Snake(this.game, this, this.foods);
+    this.children = [this.snake, this.foods];
+    this.registerListeners();
   }
 }
