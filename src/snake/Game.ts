@@ -38,6 +38,16 @@ export class GameItem {
 
 export abstract class GameObject {
   abstract items: GameItem[]
+  children: GameObject[] = []
+
+  add(obj: GameObject) {
+    this.children.push(obj);
+  }
+
+  remove(obj: GameObject) {
+    const index = this.children.indexOf(obj);
+    if (index > -1) return this.children.splice(index, 1);
+  }
 }
 
 export default class Game {
@@ -46,7 +56,7 @@ export default class Game {
   height = 0
   container: HTMLElement | null = null
   gl: WebGLRenderingContext | null = null
-  gameObjects: GameObject[] = []
+  children: GameObject[] = []
   pointProgram: WebGLProgram | null = null
   textureProgram: WebGLProgram | null = null
   projectionMat: number[] = [];
@@ -190,40 +200,39 @@ export default class Game {
     this.clearCanvas();
   }
 
-  render() {
-    this.clearCanvas();
-    this.gameObjects.forEach(obj => {
-      const pointArr: GameItem[] = [];
-      const textureArr: GameItem[] = [];
+  walk(objs: GameObject[]) {
+    const pointArr: GameItem[] = [];
+    const textureArr: GameItem[] = [];
+    objs.forEach(obj => {
       obj.items.forEach(i => {
         if (i.isPoint()) pointArr.push(i);
         else if (i.isTexture()) textureArr.push(i);
       });
-      if (pointArr.length) this.drawPoints(pointArr);
-      if (textureArr.length) this.drawTexture(textureArr);
+      if (obj.children && obj.children.length) {
+        const { points, textures } = this.walk(obj.children);
+        pointArr.splice(pointArr.length, 0, ...points);
+        textureArr.splice(textureArr.length, 0, ...textures);
+      }
     })
-  }
-
-  createPoint(x: number, y: number): GameItem {
-    const item = new GameItem('point', x, y);
-    return item;
-  }
-
-  addItem(item: GameObject | GameObject[]) {
-    if (item instanceof Array) {
-      item.forEach(i => this.gameObjects.push(i));
-    } else {
-      this.gameObjects.push(item);
+    return {
+      points: pointArr,
+      textures: textureArr
     }
   }
 
-  removeItem(item: GameObject | GameObject[]) {
-    const newList: GameObject[] = [];
-    const items = item instanceof Array ? item : [item];
-    this.gameObjects.forEach(i => {
-      const index = items.indexOf(i);
-      if (index === -1) newList.push(i);
-    })
-    this.gameObjects = newList;
+  render() {
+    this.clearCanvas();
+    const { points, textures } = this.walk(this.children);
+    if (points.length) this.drawPoints(points);
+    if (textures.length) this.drawTexture(textures);
+  }
+
+  add(obj: GameObject) {
+    this.children.push(obj);
+  }
+
+  remove(obj: GameObject) {
+    const index = this.children.indexOf(obj);
+    if (index > -1) return this.children.splice(index, 1);
   }
 }

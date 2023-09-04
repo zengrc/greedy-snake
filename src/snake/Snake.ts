@@ -28,14 +28,20 @@ export default class Snake extends GameObject {
 
   constructor(game: Game, map: Map, foods: Foods) {
     super();
-    this.items = [
-      new SnakePoint(game, map, 2, 1),
-      new SnakePoint(game, map, 2, 2),
-      new SnakePoint(game, map, 2, 3)
-    ];
     this.map = map;
     this.game = game;
     this.foods = foods;
+    this.reset();
+  }
+
+  reset() {
+    this.items = [
+      new SnakePoint(this.game, this.map, 2, 1),
+      new SnakePoint(this.game, this.map, 2, 2),
+      new SnakePoint(this.game, this.map, 2, 3)
+    ];
+    this.direction = this._direction = DIRECTION.RIGHT;
+    this.registerListeners();
   }
 
   changeDirection(direction: DIRECTION) {
@@ -118,5 +124,32 @@ export default class Snake extends GameObject {
       default:
         break;
     }
+  }
+
+  snakeMoveListener(event: KeyboardEvent) {
+    const { code } = event;
+    switch(code) {
+      case 'ArrowUp':
+        this.changeDirection(DIRECTION.UP);
+        break;
+      case 'ArrowRight':
+        this.changeDirection(DIRECTION.RIGHT);
+        break;
+      case 'ArrowLeft':
+        this.changeDirection(DIRECTION.LEFT);
+        break;
+      case 'ArrowDown':
+        this.changeDirection(DIRECTION.DOWN);
+        break;
+    }
+  }
+
+  removeListeners() {
+    document.body.removeEventListener('keydown', this.snakeMoveListener.bind(this));
+  }
+
+  registerListeners() {
+    this.removeListeners();
+    document.body.addEventListener('keydown', this.snakeMoveListener.bind(this))
   }
 }

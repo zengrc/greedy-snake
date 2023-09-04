@@ -1,5 +1,7 @@
 import Game, { GameObject } from './Game';
 import Point from './Point';
+import Snake from './Snake';
+import Foods from './Food';
 
 export enum CELL_TYPE {
   SNAKE = 1,
@@ -11,8 +13,10 @@ export default class Map extends GameObject {
   items: Point[] = [];
   col: number;
   row: number;
+  game: Game;
+  snake: Snake;
+  foods: Foods;
   private cellTypeMap: Record<string, CELL_TYPE> = {};
-  keyDownCallback: (e: KeyboardEvent) => void = () => { /**/ };
 
   get emptyCells() {
     return Object.keys(this.cellTypeMap).filter(key => !this.cellTypeMap[key]).map(key => key.split(','));
@@ -22,21 +26,8 @@ export default class Map extends GameObject {
     super();
     this.col = Math.floor(game.width / Point.CellSize);
     this.row = Math.floor(game.height / Point.CellSize);
-    for (let i = 0; i < this.row; i += 1) {
-      for (let j = 0; j < this.col; j += 1) {
-        this.items.push(new Point(game, this, i, j));
-      }
-    }
-  }
-
-  removeListeners() {
-    document.body.removeEventListener('keydown', this.keyDownCallback.bind(this));
-  }
-
-  registerListeners(cb: (e: KeyboardEvent) => void) {
-    this.removeListeners();
-    this.keyDownCallback = cb;
-    document.body.addEventListener('keydown', this.keyDownCallback.bind(this))
+    this.game = game;
+    this.reset();
   }
 
   hasEmptyCell() {
@@ -49,5 +40,21 @@ export default class Map extends GameObject {
 
   getCellType(rowIdx: number, colIdx: number) {
     return this.cellTypeMap[`${rowIdx},${colIdx}`] || CELL_TYPE.EMPTY;
+  }
+
+  update() {
+    this.snake.move();
+    this.foods.createFood();
+  }
+
+  reset() {
+    for (let i = 0; i < this.row; i += 1) {
+      for (let j = 0; j < this.col; j += 1) {
+        this.items.push(new Point(this.game, this, i, j));
+      }
+    }
+    this.foods = new Foods(this.game, this);
+    this.snake = new Snake(this.game, this, this.foods);
+    this.children = [this.snake, this.foods];
   }
 }

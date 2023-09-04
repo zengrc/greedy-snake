@@ -5,8 +5,8 @@ export default class Point extends GameItem {
   red = 0.5;
   green = 0.5;
   blue = 0.5;
-  static CellSize = 20;
-  scale = 2;
+  static CellSize = 30;
+  scale = 5;
   rowIdx: number;
   colIdx: number;
   game: Game;
