@@ -8,8 +8,8 @@ function getRandomInt(min: number, max: number) {
 }
 
 class FoodPoint extends Cube {
-  width = 6;
-  height = 6;
+  width = 15;
+  height = 15;
 
   constructor(game: Game, map: Map, rowIdx: number, colIdx: number) {
     const foodID = getRandomInt(1, 4);
@@ -43,7 +43,6 @@ export default class Foods extends GameObject {
     const index = this.items.indexOf(this.items.filter(item => item.rowIdx === point.rowIdx && item.colIdx === point.colIdx)[0]);
     if (index > -1) {
       const deleteItem = this.items.splice(index, 1)[0];
-      // 不需要destory snake会把这里的celltype变成snake
       return deleteItem;
     }
   }

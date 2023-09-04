@@ -5,10 +5,10 @@ export default class Cube extends GameItem {
   red = 0.5;
   green = 0.5;
   blue = 0.5;
-  static CellSize = 20;
+  static CellSize = 30;
   scale = 1;
-  width = 10;
-  height = 10;
+  width = 20;
+  height = 20;
   rowIdx: number;
   colIdx: number;
   game: Game;

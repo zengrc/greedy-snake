@@ -1,6 +1,6 @@
 import Game, { GameObject } from './Game';
 import Point from './Point';
-import Snake, { DIRECTION } from './Snake';
+import Snake from './Snake';
 import Foods from './Food';
 
 export enum CELL_TYPE {
@@ -30,33 +30,6 @@ export default class Map extends GameObject {
     this.reset();
   }
 
-  snakeMoveListener(event: KeyboardEvent) {
-    const { code } = event;
-    switch(code) {
-      case 'ArrowUp':
-        this.snake.changeDirection(DIRECTION.UP);
-        break;
-      case 'ArrowRight':
-        this.snake.changeDirection(DIRECTION.RIGHT);
-        break;
-      case 'ArrowLeft':
-        this.snake.changeDirection(DIRECTION.LEFT);
-        break;
-      case 'ArrowDown':
-        this.snake.changeDirection(DIRECTION.DOWN);
-        break;
-    }
-  }
-
-  removeListeners() {
-    document.body.removeEventListener('keydown', this.snakeMoveListener.bind(this));
-  }
-
-  registerListeners() {
-    this.removeListeners();
-    document.body.addEventListener('keydown', this.snakeMoveListener.bind(this))
-  }
-
   hasEmptyCell() {
     return this.emptyCells.length < this.row * this.col;
   }
@@ -83,6 +56,5 @@ export default class Map extends GameObject {
     this.foods = new Foods(this.game, this);
     this.snake = new Snake(this.game, this, this.foods);
     this.children = [this.snake, this.foods];
-    this.registerListeners();
   }
 }
